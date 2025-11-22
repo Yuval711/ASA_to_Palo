@@ -1,28 +1,24 @@
-#!/opt/homebrew/bin/python3
+#!/usr/bin/python3
 
 import csv
 
 '''
 create a file named proxy-route-rule-info.csv with the following columns:
-seq_number,PeerID,LOCAL_NET_OBJ,REMOTE_NET_OBJ,TunnelID,src_zone_name
+seq_number,PeerID,LOCAL_NET_OBJ,src_zone_name,REMOTE_NET_OBJ,TunnelID
 
 Example:
 
-seq_number,PeerID,LOCAL_NET_OBJ,REMOTE_NET_OBJ,TunnelID,src_zone_name
-1,141.57.50.11,N-172.24.10.0_24,N-172.25.10.0_24,10,FW-INSIDE
-2,141.57.50.11,N-172.24.20.0_24,N-172.25.20.0_24,10,FW-DMZ
-3,141.57.50.11,N-172.24.30.0_24,N-172.25.30.0_24,10,FW-APP
-4,141.57.50.11,N-172.24.10.0_24,N-172.26.10.0_24,10,FW-INSIDE
-5,141.57.50.11,N-172.24.20.0_24,N-172.26.20.0_24,10,FW-DMZ
-6,141.57.50.11,N-172.24.30.0_24,N-172.26.30.0_24,10,FW-APP
+seq_number,PeerID,LOCAL_NET_OBJ,src_zone_name,REMOTE_NET_OBJ,TunnelID,
+1,141.57.50.11,N-172.24.10.0_24,FW-INSIDE,N-172.25.10.0_24,10,10
+2,141.57.50.11,N-172.24.20.0_24,FW-DMZ,N-172.25.20.0_24,10,10
+3,141.57.50.11,N-172.24.30.0_24,FW-APP,N-172.25.30.0_24,10,10
+4,141.57.50.11,N-172.24.10.0_24,FW-INSIDE,N-172.26.10.0_24,10,10
+5,141.57.50.11,N-172.24.20.0_24,FW-DMZ,N-172.26.20.0_24,10,10
+6,141.57.50.11,N-172.24.30.0_24,FW-APP,N-172.26.30.0_24,10,10
 
 !! MAKE SURE TO CREATE THE OBJECTS FOR THE LOCAL AND REMOTE NETWORKS!!
 
 '''
-
-local_nets_collect = [] #collect local nets blocks
-remote_nets_collect = [] #collect remote net blocks
-local_zone_collect = [] #collect zone names
 
 def print_proxy_id():
     print ('set network tunnel ipsec PEER-' + PeerID + ' auto-key proxy-id PROXY-ID-' + seq_number + ' protocol any')
@@ -53,39 +49,42 @@ def print_sec_rule_out():
     print('')
 
 def print_sec_rule_in():
-    print('set rulebase security rules ' + rule_name_out + ' to ' + zone_names)
-    print('set rulebase security rules ' + rule_name_out + ' from VPN-S2S')
-    print('set rulebase security rules ' + rule_name_out + ' source' + str(remote_nets))
-    print('set rulebase security rules ' + rule_name_out + ' destination' + str(local_nets))
-    print('set rulebase security rules ' + rule_name_out + ' source-user any')
-    print('set rulebase security rules ' + rule_name_out + ' category any')
-    print('set rulebase security rules ' + rule_name_out + ' application any')
-    print('set rulebase security rules ' + rule_name_out + ' any')
-    print('set rulebase security rules ' + rule_name_out + ' source-hip any')
-    print('set rulebase security rules ' + rule_name_out + ' destination-hip any')
-    print('set rulebase security rules ' + rule_name_out + ' action allow')
+    print('set rulebase security rules ' + rule_name_in + ' to ' + zone_names)
+    print('set rulebase security rules ' + rule_name_in + ' from VPN-S2S')
+    print('set rulebase security rules ' + rule_name_in + ' source' + str(remote_nets))
+    print('set rulebase security rules ' + rule_name_in + ' destination' + str(local_nets))
+    print('set rulebase security rules ' + rule_name_in + ' source-user any')
+    print('set rulebase security rules ' + rule_name_in + ' category any')
+    print('set rulebase security rules ' + rule_name_in + ' application any')
+    print('set rulebase security rules ' + rule_name_in + ' any')
+    print('set rulebase security rules ' + rule_name_in + ' source-hip any')
+    print('set rulebase security rules ' + rule_name_in + ' destination-hip any')
+    print('set rulebase security rules ' + rule_name_in + ' action allow')
     print('')
 
+local_nets_collect = [] #collect local nets blocks
+remote_nets_collect = [] #collect remote net blocks
+local_zone_collect = [] #collect zone names
 
 with open('proxy-route-rule-info.csv') as f:
     info = csv.reader(f)
     next(info)
-    for seq_number,PeerID,LOCAL_NET_OBJ,REMOTE_NET_OBJ,TunnelID,src_zone_name in info:
+    for seq_number,PeerID,LOCAL_NET_OBJ,src_zone_name,REMOTE_NET_OBJ,TunnelID in info:
         print_proxy_id()
 
 with open('proxy-route-rule-info.csv') as f:
     info = csv.reader(f)
     next(info)
-    for seq_number,PeerID,LOCAL_NET_OBJ,REMOTE_NET_OBJ,TunnelID,src_zone_name in info:
+    for seq_number,PeerID,LOCAL_NET_OBJ,src_zone_name,REMOTE_NET_OBJ,TunnelID in info:
         print_static_route()
 
 
 with open('proxy-route-rule-info.csv') as f:
     info = csv.reader(f)
     next(info)   # skip header
-    for seq_number,PeerID,LOCAL_NET_OBJ,REMOTE_NET_OBJ,TunnelID,src_zone_name in info:
-        rule_name_in = 'ALLOW-' + PeerID + '-INBOUND' #construct inbound rule name
-        rule_name_out = 'ALLOW-' + PeerID + '-OUTBOUND' #construct outbound rule name
+    for seq_number,PeerID,LOCAL_NET_OBJ,src_zone_name,REMOTE_NET_OBJ,TunnelID in info:
+        rule_name_in = 'ALLOW-PEER-' + PeerID + '-INBOUND' #construct inbound rule name
+        rule_name_out = 'ALLOW-PEER-' + PeerID + '-OUTBOUND' #construct outbound rule name
         local_nets_collect.append(LOCAL_NET_OBJ) #append ip blocks to list above
         remote_nets_collect.append(REMOTE_NET_OBJ) #append ip blocks to list above
         local_zone_collect.append(src_zone_name) #append zone names to list above
@@ -96,9 +95,9 @@ remote_nets = list(set(remote_nets_collect))
 zone_names = list(set(local_zone_collect))
 
 #convert lists to Palo Alto format
-local_nets =  "[ " + " ".join(local_nets_collect) + " ]" 
-remote_nets = "[ " + " ".join(remote_nets_collect) + " ]"
-zone_names = "[ " + " ".join(local_zone_collect) + " ]"
+local_nets =  "[ " + " ".join(local_nets) + " ]" 
+remote_nets = "[ " + " ".join(remote_nets) + " ]"
+zone_names = "[ " + " ".join(zone_names) + " ]"
 
 
 print_sec_rule_in()
