@@ -173,7 +173,7 @@ print('==================')
 print('IPSEC With PROXY ID Section')
 print('==================')
 print('**!!')
-print('**!! note: Ike Gateway MUST be present before proceeding !!**')
+print('**!! BEFORE COPYING note: Ike Gateway MUST be present before proceeding !!**')
 print('**!!')
 print(f'set network tunnel ipsec PEER-{PeerID} auto-key ike-gateway PEER-{PeerID}')
 seq_number = 1 
