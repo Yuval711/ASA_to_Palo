@@ -183,10 +183,10 @@ else:
 print(' ')
 print('* here is your Ike set configuration:')
 print(' ')
-print (f'set network ike crypto-profiles ike-crypto-profiles {ike_set_name} hash {auth_answer}')
-print (f'set network ike crypto-profiles ike-crypto-profiles {ike_set_name} dh-group {dh_answer}')
-print (f'set network ike crypto-profiles ike-crypto-profiles {ike_set_name} encryption {encry_answer}')
-print (f'set network ike crypto-profiles ike-crypto-profiles {ike_set_name} lifetime {lt_answer}')
+print (f'set network ike crypto-profiles ike-crypto-profiles {ike_set_name.upper()} hash {auth_answer}')
+print (f'set network ike crypto-profiles ike-crypto-profiles {ike_set_name.upper()} dh-group {dh_answer}')
+print (f'set network ike crypto-profiles ike-crypto-profiles {ike_set_name.upper()} encryption {encry_answer}')
+print (f'set network ike crypto-profiles ike-crypto-profiles {ike_set_name.upper()} lifetime {lt_answer}')
 
 
 #for future config
