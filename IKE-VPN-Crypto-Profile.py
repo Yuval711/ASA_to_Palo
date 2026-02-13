@@ -1,10 +1,6 @@
 #!//usr/bin/python3
 
 
-PeerID = '192.168.122.180'
-FW_IP = '192.168.122.160/24'
-IKE_SET = 'DH14-AES256-SHA256-86400'
-
 #=====================
 # DH_group_choice 
 DH_Group =  {
